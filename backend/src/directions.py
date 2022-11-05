@@ -1,20 +1,9 @@
-from typing import Literal, Optional
+from datetime import datetime
+from typing import Any, Literal, Optional
+
 from pydantic import BaseModel
 
-
-class LatLngLiteral(BaseModel):
-    lat: float
-    lng: float
-
-
-class Bounds(BaseModel):
-    northeast: LatLngLiteral
-    southwest: LatLngLiteral
-
-
-class TextValueObject(BaseModel):
-    text: str
-    value: int
+from src.commons import Bounds, LatLngLiteral, TextValueObject
 
 
 class DirectionsPolyline(BaseModel):
@@ -150,3 +139,17 @@ class DirectionsRoute(BaseModel):
     warnings: list[str]
     waypoint_order: list[int]
     fare: Optional[Fare] = None
+
+
+class DirectionsRequest(BaseModel):
+    origin: str
+    destination: str
+    target_time: datetime
+    mode: Literal["driving", "walking", "bicycling", "transit"] = "transit"
+    transit_mode: Literal[
+        "bus", "subway", "train", "tram", "rail"
+    ] = "rail"  # TODO: "train" cannot be used in Japan...
+    time_mode: Literal["arrival", "departure"] = "departure"
+    language: Literal[
+        "ja", "en", "es", "fr", "de", "it", "pt", "ru", "zh-CN", "zh-TW"
+    ] = "ja"  # see https://developers.google.com/maps/faq#languagesupport
